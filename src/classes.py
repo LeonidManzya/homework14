@@ -16,13 +16,13 @@ class Category:
     description: str
     products: str
 
-    total_categories = 0
-    total_products = 0
+    category_count = 0
+    product_count = 0
 
     def __init__(self, name, description, products=None):
         self.name = name
         self.description = description
         self.products = products if products is not None else []
 
-        Category.total_categories += 1
-        Category.total_products += len(self.products)
+        Category.category_count += 1
+        Category.product_count += len(self.products)
