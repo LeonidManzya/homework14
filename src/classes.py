@@ -1,3 +1,4 @@
+
 class Product:
     name: str
     description: str
@@ -14,7 +15,7 @@ class Product:
 class Category:
     name: str
     description: str
-    products: str
+    products: list
 
     category_count = 0
     product_count = 0
@@ -26,3 +27,5 @@ class Category:
 
         Category.category_count += 1
         Category.product_count += len(self.products)
+
+

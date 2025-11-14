@@ -5,11 +5,11 @@ from src.classes import Category, Product
 
 @pytest.fixture(autouse=True)
 def reset_counters():
-    Category.total_categories = 0
-    Category.total_products = 0
+    Category.category_count = 0
+    Category.product_count = 0
     yield
-    Category.total_categories = 0
-    Category.total_products = 0
+    Category.category_count = 0
+    Category.product_count = 0
 
 
 def test_product_creation():
@@ -32,8 +32,8 @@ def test_category_creation_with_products():
     assert category.name == "Электроника"
     assert category.description == "Техника и гаджеты"
     assert len(category.products) == 2
-    assert Category.total_categories == 1
-    assert Category.total_products == 2
+    assert Category.category_count == 1
+    assert Category.product_count == 2
 
 
 def test_multiple_categories_with_products_counter():
@@ -46,8 +46,8 @@ def test_multiple_categories_with_products_counter():
     category1 = Category("Электроника", "Техника и гаджеты", products1)
     category2 = Category("Книги", "Художественная литература", products2)
 
-    assert Category.total_categories == 2
-    assert Category.total_products == 3
+    assert Category.category_count == 2
+    assert Category.product_count == 3
 
 
 def test_category_creation_empty_products():
@@ -56,8 +56,8 @@ def test_category_creation_empty_products():
     assert category.name == "Электроника"
     assert category.description == "Техника и гаджеты"
     assert category.products == []
-    assert Category.total_categories == 1
-    assert Category.total_products == 0
+    assert Category.category_count == 1
+    assert Category.product_count == 0
 
 
 def test_product_in_category():
