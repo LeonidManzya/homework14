@@ -59,3 +59,11 @@
 ### test_price_setter_invalid_zero
 
 Тест сеттера цены с нулевым значением
+
+### test_product_str
+
+Тест метода __str__
+
+### test_product_add
+
+Тест метода __add__
