@@ -67,3 +67,28 @@
 ### test_product_add
 
 Тест метода __add__
+
+### test_smartphone_creation_and_str
+
+Тест создания и строкового представления смартфона
+
+### test_lawn_grass_creation_and_str
+
+Тест создания и строкового представления газонной травы
+
+### test_add_same_class_products
+
+Тест сложения продуктов одного класса
+
+### test_add_different_class_products_raises_error
+
+Тест ошибки при сложении продуктов разных классов
+
+### test_add_valid_products_to_category
+
+Тест добавления валидных продуктов в категорию
+
+### test_add_invalid_product_to_category_raises_error
+
+Тест ошибки при добавлении невалидного объекта в категорию
+

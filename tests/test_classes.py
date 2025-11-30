@@ -1,7 +1,7 @@
 import pytest
 import unittest
 
-from src.classes import Category, Product
+from src.classes import Category, Smartphone, LawnGrass, Product
 
 
 @pytest.fixture(autouse=True)
@@ -160,12 +160,58 @@ def test_price_setter_invalid_zero(capsys):
     captured = capsys.readouterr()
     assert "Цена не должна быть нулевая или отрицательная" in captured.out
 
-def test_product_str():
-    product = Product("Телефон", "Смартфон", 50000, 10)
-    assert str(product) == "Телефон, 50000 руб. Остаток: 10 шт."
 
+class TestProducts:
 
-def test_product_add():
-    product1 = Product("Товар A", "Описание A", 100, 10)
-    product2 = Product("Товар B", "Описание B", 200, 2)
-    assert product1 + product2 == 1400
+    def test_smartphone_creation_and_str(self):
+        smartphone = Smartphone(
+            "iPhone", "Флагман", 50000, 10,
+            "Высокая", "15 Pro", "256GB", "Black"
+        )
+        assert smartphone.name == "iPhone"
+        assert smartphone.model == "15 Pro"
+        expected_str = "iPhone, 15 Pro, 50000 руб. Остаток: 10 шт."
+        assert str(smartphone) == expected_str
+
+    def test_lawn_grass_creation_and_str(self):
+        grass = LawnGrass(
+            "Газонная трава", "Для дачи", 2000, 20,
+            "Россия", "14 дней", "Зеленый"
+        )
+        assert grass.name == "Газонная трава"
+        assert grass.country == "Россия"
+        expected_str = "Газонная трава, Россия, 2000 руб. Остаток: 20 шт."
+        assert str(grass) == expected_str
+
+    def test_add_same_class_products(self):
+        smartphone1 = Smartphone("iPhone", "Флагман", 50000, 2, "Высокая", "15 Pro", "256GB", "Black")
+        smartphone2 = Smartphone("Samsung", "Android", 30000, 3, "Средняя", "Galaxy S23", "128GB", "White")
+
+        result = smartphone1 + smartphone2
+        expected = (50000 * 2) + (30000 * 3)
+        assert result == expected
+
+    def test_add_different_class_products_raises_error(self):
+        smartphone = Smartphone("iPhone", "Флагман", 50000, 2, "Высокая", "15 Pro", "256GB", "Black")
+        grass = LawnGrass("Газонная трава", "Для дачи", 2000, 5, "Россия", "14 дней", "Зеленый")
+
+        with pytest.raises(TypeError, match="Можно складывать только товары из одинаковых классов продуктов"):
+            smartphone + grass
+
+    def test_add_valid_products_to_category(self):
+        category = Category("Электроника", "Техника")
+        smartphone = Smartphone("iPhone", "Флагман", 50000, 10, "Высокая", "15 Pro", "256GB", "Black")
+        product = Product("Обычный товар", "Описание", 1000, 5)
+
+        category.add_product(smartphone)
+        category.add_product(product)
+
+        assert len(category.products) == 2
+        assert "iPhone, 15 Pro, 50000 руб. Остаток: 10 шт." in category.products
+        assert "Обычный товар, 1000 руб. Остаток: 5 шт." in category.products
+
+    def test_add_invalid_product_to_category_raises_error(self):
+        category = Category("Электроника", "Техника")
+
+        with pytest.raises(TypeError, match="Можно добавлять только объекты класса Product или его наследников"):
+            category.add_product("не продукт")
