@@ -1,4 +1,5 @@
 import pytest
+import unittest
 
 from src.classes import Category, Product
 
@@ -158,3 +159,13 @@ def test_price_setter_invalid_zero(capsys):
     assert product.price == 50000
     captured = capsys.readouterr()
     assert "Цена не должна быть нулевая или отрицательная" in captured.out
+
+def test_product_str():
+    product = Product("Телефон", "Смартфон", 50000, 10)
+    assert str(product) == "Телефон, 50000 руб. Остаток: 10 шт."
+
+
+def test_product_add():
+    product1 = Product("Товар A", "Описание A", 100, 10)
+    product2 = Product("Товар B", "Описание B", 200, 2)
+    assert product1 + product2 == 1400
