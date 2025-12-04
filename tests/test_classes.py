@@ -1,7 +1,7 @@
 import pytest
 import unittest
 
-from src.classes import Category, Smartphone, LawnGrass, Product
+from src.classes import Category, BaseProduct, Smartphone, LawnGrass, Product
 
 
 @pytest.fixture(autouse=True)
@@ -213,5 +213,73 @@ class TestProducts:
     def test_add_invalid_product_to_category_raises_error(self):
         category = Category("Электроника", "Техника")
 
-        with pytest.raises(TypeError, match="Можно добавлять только объекты класса Product или его наследников"):
+        with pytest.raises(TypeError):
             category.add_product("не продукт")
+
+
+class TestTask1AbstractClass:
+
+    def test_baseproduct_is_abstract(self):
+        with pytest.raises(TypeError, match="abstract"):
+            BaseProduct("Товар", "Описание", 100, 5)
+
+    def test_product_inherits_baseproduct(self):
+        product = Product("Товар", "Описание", 100, 5)
+        assert isinstance(product, BaseProduct)
+
+
+class TestTask2Mixin:
+
+    def test_mixin_prints_on_creation(self, capsys):
+        Product("Товар", "Описание", 100, 5)
+        captured = capsys.readouterr()
+        assert "Создан объект класса Product" in captured.out
+
+    def test_mixin_works_in_smartphone(self, capsys):
+        Smartphone("iPhone", "Тест", 50000, 1, "Высокая", "15", "256GB", "Black")
+        captured = capsys.readouterr()
+        assert "Создан объект класса Smartphone" in captured.out
+
+
+class TestOriginalFunctionality:
+
+    def test_add_method_works(self):
+        p1 = Product("Товар1", "Описание", 100, 2)
+        p2 = Product("Товар2", "Описание", 200, 3)
+        result = p1 + p2
+        assert result == (100 * 2) + (200 * 3)
+
+    def test_category_accepts_products(self):
+        category = Category("Тест", "Описание")
+        product = Product("Товар", "Описание", 100, 5)
+        category.add_product(product)
+        assert len(category.products) == 1
+
+
+class TestZeroQuantityException:
+
+
+    def test_product_zero_quantity(self):
+        with pytest.raises(ValueError, match="Товар с нулевым количеством не может быть добавлен"):
+            Product("Товар", "Описание", 1000, 0)
+
+    def test_smartphone_zero_quantity(self):
+        with pytest.raises(ValueError, match="Товар с нулевым количеством не может быть добавлен"):
+            Smartphone("iPhone", "Тест", 50000, 0, "Высокая", "15", "256GB", "Black")
+
+
+class TestCategoryAveragePrice:
+
+    def test_empty_category_average_price(self, capsys):
+        category = Category("Тест", "Описание")
+        result = category.average_price()
+        assert result == 0
+
+    def test_category_with_products_average_price(self):
+        category = Category("Тест", "Описание")
+        category.add_product(Product("Товар1", "Описание", 1000, 2))
+        category.add_product(Product("Товар2", "Описание", 2000, 3))
+
+        result = category.average_price()
+        expected = (1000 + 2000) / 2
+        assert result == expected

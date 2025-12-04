@@ -92,3 +92,42 @@
 
 Тест ошибки при добавлении невалидного объекта в категорию
 
+### test_baseproduct_is_abstract
+
+BaseProduct нельзя создать
+
+### test_product_inherits_baseproduct
+
+Product наследует BaseProduct
+
+### test_mixin_prints_on_creation
+
+Миксин выводит информацию при создании
+
+### test_mixin_works_in_smartphon
+
+Миксин работает в Smartphone
+
+### test_add_method_works
+
+Сложение работает
+
+### test_category_accepts_products
+
+Category принимает продукты
+
+### test_product_zero_quantity
+
+Product с quantity=0 вызывает ValueError"
+
+### test_smartphone_zero_quantity
+
+Smartphone с quantity=0 вызывает ValueError
+
+### test_empty_category_average_price
+
+Пустая категория возвращает 0
+
+### test_category_with_products_average_price
+
+Категория с товарами считает среднюю цену

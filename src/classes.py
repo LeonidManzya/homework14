@@ -1,13 +1,74 @@
-class Product:
-    name: str
-    description: str
-    price: int
-    quantity: int
+from abc import ABC, abstractmethod
 
+
+class Mixin:
+    def __init__(self, *args, **kwargs):
+        self._init_args = args
+        self._init_kwargs = kwargs
+
+        class_name = self.__class__.__name__
+        print(f"Создан объект класса {class_name} с параметрами:")
+
+        if args:
+            print(f"  Позиционные аргументы: {args}")
+
+        if kwargs:
+            print(f"  Именованные аргументы: {kwargs}")
+
+        if not args and not kwargs:
+            print("  (без аргументов)")
+
+        print()
+
+        super().__init__(*args, **kwargs)
+
+    def __repr__(self):
+        class_name = self.__class__.__name__
+        args_str = ", ".join([repr(arg) for arg in self._init_args])
+        kwargs_str = ", ".join([f"{k}={repr(v)}" for k, v in self._init_kwargs.items()])
+
+        all_args = []
+        if args_str:
+            all_args.append(args_str)
+        if kwargs_str:
+            all_args.append(kwargs_str)
+
+        return f"{class_name}({', '.join(all_args)})"
+
+
+class BaseProduct(ABC):
+    @abstractmethod
+    def __init__(self, name: str, description: str, price: float, quantity: int):
+        pass
+
+    @abstractmethod
+    def __str__(self):
+        pass
+
+    @abstractmethod
+    def __add__(self, other):
+        pass
+
+    @property
+    @abstractmethod
+    def price(self):
+        pass
+
+    @price.setter
+    @abstractmethod
+    def price(self, value):
+        pass
+
+
+class Product(Mixin, BaseProduct):
     def __init__(self, name, description, price, quantity):
+        if quantity == 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен")
+
+        super().__init__(name, description, price, quantity)
         self.name = name
         self.description = description
-        self.price = price
+        self.__price = price
         self.quantity = quantity
 
     def __str__(self):
@@ -24,11 +85,6 @@ class Product:
         total_other = other.price * other.quantity
         return total_self + total_other
 
-    @classmethod
-    def new_product(cls, product_data):
-        return cls(name=product_data['name'], description=product_data['description'], price=product_data['price'],
-                   quantity=product_data['quantity'])
-
     @property
     def price(self):
         return self.__price
@@ -40,39 +96,14 @@ class Product:
         else:
             self.__price = new_price
 
-
-class Category:
-    name: str
-    description: str
-    products: list
-
-    category_count = 0
-    product_count = 0
-
-    def __init__(self, name, description, products=None):
-        self.name = name
-        self.description = description
-        self.__products = products if products is not None else []
-
-        Category.category_count += 1
-        Category.product_count += len(self.__products)
-
-    def __str__(self):
-        return f"{self.name}, количество продуктов: {len(self.__products)} шт."
-
-    def add_product(self, product):
-        if not isinstance(product, Product):
-            raise TypeError("Можно добавлять только объекты класса Product или его наследников")
-
-        if not issubclass(type(product), Product):
-            raise TypeError("Можно добавлять только объекты классов, наследующих от Product")
-
-        self.__products.append(product)
-        Category.product_count += 1
-
-    @property
-    def products(self):
-        return [str(product) for product in self.__products]
+    @classmethod
+    def new_product(cls, product_data):
+        return cls(
+            name=product_data['name'],
+            description=product_data['description'],
+            price=product_data['price'],
+            quantity=product_data['quantity']
+        )
 
 
 class Smartphone(Product):
@@ -97,83 +128,42 @@ class LawnGrass(Product):
     def __str__(self):
         return f"{self.name}, {self.country}, {self.price} руб. Остаток: {self.quantity} шт."
 
-if __name__ == '__main__':
-    smartphone1 = Smartphone("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5, 95.5,
-                         "S23 Ultra", 256, "Серый")
-    smartphone2 = Smartphone("Iphone 15", "512GB, Gray space", 210000.0, 8, 98.2, "15", 512, "Gray space")
-    smartphone3 = Smartphone("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14, 90.3, "Note 11", 1024, "Синий")
 
-    print(smartphone1.name)
-    print(smartphone1.description)
-    print(smartphone1.price)
-    print(smartphone1.quantity)
-    print(smartphone1.efficiency)
-    print(smartphone1.model)
-    print(smartphone1.memory)
-    print(smartphone1.color)
+class Category:
+    name: str
+    description: str
+    products: list
 
-    print(smartphone2.name)
-    print(smartphone2.description)
-    print(smartphone2.price)
-    print(smartphone2.quantity)
-    print(smartphone2.efficiency)
-    print(smartphone2.model)
-    print(smartphone2.memory)
-    print(smartphone2.color)
+    category_count = 0
+    product_count = 0
 
-    print(smartphone3.name)
-    print(smartphone3.description)
-    print(smartphone3.price)
-    print(smartphone3.quantity)
-    print(smartphone3.efficiency)
-    print(smartphone3.model)
-    print(smartphone3.memory)
-    print(smartphone3.color)
+    def __init__(self, name, description, products=None):
+        self.name = name
+        self.description = description
+        self.__products = products if products is not None else []
 
-    grass1 = LawnGrass("Газонная трава", "Элитная трава для газона", 500.0, 20, "Россия", "7 дней", "Зеленый")
-    grass2 = LawnGrass("Газонная трава 2", "Выносливая трава", 450.0, 15, "США", "5 дней", "Темно-зеленый")
+        Category.category_count += 1
+        Category.product_count += len(self.__products)
 
-    print(grass1.name)
-    print(grass1.description)
-    print(grass1.price)
-    print(grass1.quantity)
-    print(grass1.country)
-    print(grass1.germination_period)
-    print(grass1.color)
+    def __str__(self):
+        return f"{self.name}, количество продуктов: {len(self.__products)} шт."
 
-    print(grass2.name)
-    print(grass2.description)
-    print(grass2.price)
-    print(grass2.quantity)
-    print(grass2.country)
-    print(grass2.germination_period)
-    print(grass2.color)
+    def add_product(self, product):
+        if not isinstance(product, BaseProduct):
+            raise TypeError("Можно добавлять только объекты класса BaseProduct или его наследников")
 
-    smartphone_sum = smartphone1 + smartphone2
-    print(smartphone_sum)
+        self.__products.append(product)
+        Category.product_count += 1
 
-    grass_sum = grass1 + grass2
-    print(grass_sum)
+    @property
+    def products(self):
+        return [str(product) for product in self.__products]
 
-    try:
-        invalid_sum = smartphone1 + grass1
-    except TypeError:
-        print("Возникла ошибка TypeError при попытке сложения")
-    else:
-        print("Не возникла ошибка TypeError при попытке сложения")
-
-    category_smartphones = Category("Смартфоны", "Высокотехнологичные смартфоны", [smartphone1, smartphone2])
-    category_grass = Category("Газонная трава", "Различные виды газонной травы", [grass1, grass2])
-
-    category_smartphones.add_product(smartphone3)
-
-    print(category_smartphones.products)
-
-    print(Category.product_count)
-
-    try:
-        category_smartphones.add_product("Not a product")
-    except TypeError:
-        print("Возникла ошибка TypeError при добавлении не продукта")
-    else:
-        print("Не возникла ошибка TypeError при добавлении не продукта")
+    def average_price(self):
+        try:
+            total_price = sum(product.price for product in self.__products)
+            average = total_price / len(self.__products)
+            return average
+        except ZeroDivisionError:
+            print("В категории нет товаров, средняя цена = 0")
+            return 0
