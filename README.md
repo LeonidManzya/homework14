@@ -115,3 +115,19 @@ Product наследует BaseProduct
 ### test_category_accepts_products
 
 Category принимает продукты
+
+### test_product_zero_quantity
+
+Product с quantity=0 вызывает ValueError"
+
+### test_smartphone_zero_quantity
+
+Smartphone с quantity=0 вызывает ValueError
+
+### test_empty_category_average_price
+
+Пустая категория возвращает 0
+
+### test_category_with_products_average_price
+
+Категория с товарами считает среднюю цену

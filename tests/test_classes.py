@@ -254,3 +254,32 @@ class TestOriginalFunctionality:
         product = Product("Товар", "Описание", 100, 5)
         category.add_product(product)
         assert len(category.products) == 1
+
+
+class TestZeroQuantityException:
+
+
+    def test_product_zero_quantity(self):
+        with pytest.raises(ValueError, match="Товар с нулевым количеством не может быть добавлен"):
+            Product("Товар", "Описание", 1000, 0)
+
+    def test_smartphone_zero_quantity(self):
+        with pytest.raises(ValueError, match="Товар с нулевым количеством не может быть добавлен"):
+            Smartphone("iPhone", "Тест", 50000, 0, "Высокая", "15", "256GB", "Black")
+
+
+class TestCategoryAveragePrice:
+
+    def test_empty_category_average_price(self, capsys):
+        category = Category("Тест", "Описание")
+        result = category.average_price()
+        assert result == 0
+
+    def test_category_with_products_average_price(self):
+        category = Category("Тест", "Описание")
+        category.add_product(Product("Товар1", "Описание", 1000, 2))
+        category.add_product(Product("Товар2", "Описание", 2000, 3))
+
+        result = category.average_price()
+        expected = (1000 + 2000) / 2
+        assert result == expected
