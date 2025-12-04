@@ -62,7 +62,6 @@ class BaseProduct(ABC):
 
 class Product(Mixin, BaseProduct):
     def __init__(self, name, description, price, quantity):
-        # Проверка количества перед созданием объекта
         if quantity == 0:
             raise ValueError("Товар с нулевым количеством не может быть добавлен")
 
@@ -161,13 +160,10 @@ class Category:
         return [str(product) for product in self.__products]
 
     def average_price(self):
-        """Возвращает среднюю цену товаров в категории"""
         try:
-            # Если нет товаров, деление на ноль вызовет ZeroDivisionError
             total_price = sum(product.price for product in self.__products)
             average = total_price / len(self.__products)
             return average
         except ZeroDivisionError:
-            # Обрабатываем случай, когда в категории нет товаров
             print("В категории нет товаров, средняя цена = 0")
             return 0
