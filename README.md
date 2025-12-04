@@ -92,3 +92,26 @@
 
 Тест ошибки при добавлении невалидного объекта в категорию
 
+### test_baseproduct_is_abstract
+
+BaseProduct нельзя создать
+
+### test_product_inherits_baseproduct
+
+Product наследует BaseProduct
+
+### test_mixin_prints_on_creation
+
+Миксин выводит информацию при создании
+
+### test_mixin_works_in_smartphon
+
+Миксин работает в Smartphone
+
+### test_add_method_works
+
+Сложение работает
+
+### test_category_accepts_products
+
+Category принимает продукты
